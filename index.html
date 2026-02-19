@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Admin System</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #232331;
+            --surface: #1a1a1e;
+            --surface2: #23232f;
+            --border: #2e2e3f;
+            --accent: #6c63ff;
+            --accent2: #a78bfa;
+            --success: #34d399;
+            --danger: #f87171;
+            --text: #e8e8f0;
+            --muted: #6b6b8a;
+            --radius: 14px;
+            
+        }
+        
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(108,99,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(167,139,250,0.10) 0%, transparent 60%);
+        }
+
+        .card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+            animation: fadeIn 0.35s ease;
+        }
+
+        .admin-card {
+            max-width: 680px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent2);
+            margin-bottom: 6px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 28px;
+            line-height: 1.2;
+        }
+
+        h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 24px 0 12px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        /* Inputs */
+        .field { margin-bottom: 14px; }
+        label.field-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="date"] {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-primary:hover { background: #5b52e8; transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--border); }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+            display: inline-block;
+            margin: 0;
+        }
+        .btn-danger:hover { background: var(--danger); color: white; }
+
+        .btn-success {
+            background: var(--success);
+            color: #0a1a10;
+        }
+        .btn-success:hover { background: #2fbf86; transform: translateY(-1px); }
+
+        /* Main menu choices */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .menu-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 22px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-card:hover { border-color: var(--accent); background: rgba(108,99,255,0.08); }
+        .menu-card .icon { font-size: 32px; margin-bottom: 10px; }
+        .menu-card .title { font-size: 15px; font-weight: 600; }
+        .menu-card .sub   { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+        /* Radio options */
+        .radio-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-option:hover { border-color: var(--accent); }
+        .radio-option input[type="radio"] { accent-color: var(--accent); width: 16px; height: 16px; }
+        .radio-option.selected { border-color: var(--accent); background: rgba(108,99,255,0.1); }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        th {
+            background: var(--surface2);
+            color: var(--muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--surface2); }
+
+        /* Stats bar */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+        .stat-box .num {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--accent2);
+            font-family: 'Space Mono', monospace;
+        }
+        .stat-box .lbl {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--success);
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 14px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            z-index: 999;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        }
+        .toast.error { border-left-color: var(--danger); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .hidden { display: none !important; }
+
+        .loader {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state {
+            text-align: center;
+            color: var(--muted);
+            padding: 32px;
+            font-size: 14px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(108,99,255,0.15);
+            color: var(--accent2);
+            border: 1px solid rgba(108,99,255,0.3);
+        }
+
+        .table-wrapper {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── MAIN MENU ── -->
+<div class="card" id="mainMenu">
+    <div class="logo">Student Portal</div>
+    <h2>Welcome Back 👋</h2>
+    <div class="menu-grid">
+        <div class="menu-card" onclick="showStudentLogin()">
+            <div class="icon">🎓</div>
+            <div class="title">Student</div>
+            <div class="sub">Login & select courses</div>
+        </div>
+        <div class="menu-card" onclick="showAdminLogin()">
+            <div class="icon">🔐</div>
+            <div class="title">Admin</div>
+            <div class="sub">Manage students</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── STUDENT LOGIN ── -->
+<div class="card hidden" id="studentLogin">
+    <div class="logo">Student Portal</div>
+    <h2>Student Login</h2>
+    <div class="field">
+        <label class="field-label">Register Number</label>
+        <input type="text" id="regNo" placeholder="e.g. 2023CS001">
+    </div>
+    <div class="field">
+        <label class="field-label">Date of Birth</label>
+        <input type="date" id="dob">
+    </div>
+    <button class="btn btn-primary" onclick="studentLogin()">Login →</button>
+    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+</div>
+
+<!-- ── STUDENT PANEL ── -->
+<div class="card hidden" id="studentPanel">
+    <div class="logo">Student Portal</div>
+    <h2>Course Selection</h2>
+
+    <h3>NME Subject</h3>
+    <div class="radio-group">
+        <label class="radio-option">
+            <input type="radio" name="nme" value="B.Com"> B.Com
+        </label>
+        <label class="radio-option">
+            <input type="radio" name="nme" value="B.Sc"> B.Sc
+        </label>
+        <label class="radio-option">
+            <input type="radio" name="nme" value="B.A"> B.A
+        </label>
+    </div>
+
+    <h3>Part V Activity</h3>
+    <div class="radio-group">
+        <label class="radio-option">
+            <input type="radio" name="activity" value="NSS"> NSS – National Service Scheme
+        </label>
+        <label class="radio-option">
+            <input type="radio" name="activity" value="NCC"> NCC – National Cadet Corps
+        </label>
+        <label class="radio-option">
+            <input type="radio" name="activity" value="LEO"> LEO – Leo Club
+        </label>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <button class="btn btn-success" onclick="confirmSelection()">✓ Confirm Selection</button>
+        <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+    </div>
+</div>
+
+<!-- ── ADMIN LOGIN ── -->
+<div class="card hidden" id="adminLogin">
+    <div class="logo">Admin Portal</div>
+    <h2>Admin Login</h2>
+    <div class="field">
+        <label class="field-label">Username</label>
+        <input type="text" id="adminUser" placeholder="admin">
+    </div>
+    <div class="field">
+        <label class="field-label">Password</label>
+        <input type="password" id="adminPass" placeholder="••••••">
+    </div>
+    <button class="btn btn-primary" onclick="adminLogin()">Login →</button>
+    <button class="btn btn-secondary" onclick="goHome()">← Back</button>
+</div>
+
+<!-- ── ADMIN PANEL ── -->
+<div class="card admin-card hidden" id="adminPanel">
+    <div class="logo">Admin Portal</div>
+    <h2>Dashboard</h2>
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow">
+        <div class="stat-box"><div class="num" id="statStudents">–</div><div class="lbl">Students</div></div>
+        <div class="stat-box"><div class="num" id="statSubmitted">–</div><div class="lbl">Submitted</div></div>
+        <div class="stat-box"><div class="num" id="statPending">–</div><div class="lbl">Pending</div></div>
+    </div>
+
+    <!-- Add Student -->
+    <h3>Add Student</h3>
+    <div style="display:flex; gap:8px; align-items:flex-end;">
+        <div class="field" style="flex:1; margin:0;">
+            <input type="text" id="newReg" placeholder="Register Number">
+        </div>
+        <div class="field" style="flex:1; margin:0;">
+            <input type="date" id="newDob">
+        </div>
+        <button class="btn btn-primary" style="width:auto; padding:11px 18px; margin:0;" onclick="addStudent()">Add</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Selections Table -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3 style="margin:0;">Student Selections</h3>
+        <a href="http://localhost:8000/api/export/csv" style="font-size:13px; color:var(--accent2); text-decoration:none;">⬇ Export CSV</a>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Reg No</th>
+                    <th>NME</th>
+                    <th>Activity</th>
+                    <th>Submitted</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="dataTable"></tbody>
+        </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- All Students Table -->
+    <h3>Registered Students</h3>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Reg No</th>
+                    <th>DOB</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="studentTable"></tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:20px;">
+        <button class="btn btn-secondary" onclick="goHome()">← Logout</button>
+    </div>
+</div>
+
+<script>
+const API = "http://localhost:8000";
+let currentStudent = "";
+
+// ── UI helpers ──────────────────────────────
+function hideAll() {
+    ["mainMenu","studentLogin","adminLogin","studentPanel","adminPanel"]
+        .forEach(id => document.getElementById(id).classList.add("hidden"));
+}
+
+function goHome() {
+    hideAll();
+    currentStudent = "";
+    document.getElementById("mainMenu").classList.remove("hidden");
+}
+
+function showStudentLogin() { hideAll(); document.getElementById("studentLogin").classList.remove("hidden"); }
+function showAdminLogin()   { hideAll(); document.getElementById("adminLogin").classList.remove("hidden"); }
+
+function toast(msg, isError = false) {
+    const el = document.createElement("div");
+    el.className = "toast" + (isError ? " error" : "");
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+}
+
+// ── API calls ───────────────────────────────
+async function api(method, endpoint, body = null) {
+    const opts = { method, headers: { "Content-Type": "application/json" } };
+    if (body) opts.body = JSON.stringify(body);
+    const res  = await fetch(API + endpoint, opts);
+    const data = await res.json();
+    return { ok: res.ok, status: res.status, data };
+}
+
+// ── Student login ───────────────────────────
+async function studentLogin() {
+    const reg = document.getElementById("regNo").value.trim();
+    const dob = document.getElementById("dob").value;
+    if (!reg || !dob) { toast("Please fill all fields", true); return; }
+
+    const { ok, data } = await api("POST", "/api/student/login", { reg, dob });
+    if (ok) {
+        currentStudent = reg;
+        hideAll();
+        document.getElementById("studentPanel").classList.remove("hidden");
+        if (data.already_submitted) {
+            toast("You've already submitted. You can update your selection.");
+        }
+    } else {
+        toast(data.message || "Login failed", true);
+    }
+}
+
+// ── Confirm selection ───────────────────────
+async function confirmSelection() {
+    const nme      = document.querySelector('input[name="nme"]:checked');
+    const activity = document.querySelector('input[name="activity"]:checked');
+    if (!nme || !activity) { toast("Please select both NME and Activity", true); return; }
+
+    const { ok, data } = await api("POST", "/api/student/select", {
+        reg: currentStudent, nme: nme.value, activity: activity.value
+    });
+
+    if (ok) { toast(data.message || "Selection saved!"); }
+    else     { toast(data.message || "Error saving", true); }
+}
+
+// ── Admin login ─────────────────────────────
+async function adminLogin() {
+    const username = document.getElementById("adminUser").value;
+    const password = document.getElementById("adminPass").value;
+
+    const { ok, data } = await api("POST", "/api/admin/login", { username, password });
+    if (ok) {
+        hideAll();
+        document.getElementById("adminPanel").classList.remove("hidden");
+        loadAdminData();
+    } else {
+        toast(data.message || "Invalid credentials", true);
+    }
+}
+
+// ── Add student ─────────────────────────────
+async function addStudent() {
+    const reg = document.getElementById("newReg").value.trim();
+    const dob = document.getElementById("newDob").value;
+    if (!reg || !dob) { toast("Enter Register Number and DOB", true); return; }
+
+    const { ok, data } = await api("POST", "/api/admin/add-student", { reg, dob });
+    if (ok) {
+        toast(data.message);
+        document.getElementById("newReg").value = "";
+        document.getElementById("newDob").value = "";
+        loadAdminData();
+    } else {
+        toast(data.message || "Error adding student", true);
+    }
+}
+
+// ── Delete student ──────────────────────────
+async function deleteStudent(reg) {
+    if (!confirm(`Delete student ${reg}? This also removes their selection.`)) return;
+    const { ok, data } = await api("DELETE", `/api/admin/student/${reg}`);
+    if (ok) { toast(data.message); loadAdminData(); }
+    else     { toast(data.message || "Error", true); }
+}
+
+// ── Load admin dashboard ─────────────────────
+async function loadAdminData() {
+    const [{ data: sd }, { data: sl }, { data: stats }] = await Promise.all([
+        api("GET", "/api/students"),
+        api("GET", "/api/selections"),
+        api("GET", "/api/stats"),
+    ]);
+
+    // Stats
+    document.getElementById("statStudents").textContent  = stats.total_students;
+    document.getElementById("statSubmitted").textContent = stats.total_submitted;
+    document.getElementById("statPending").textContent   = stats.total_students - stats.total_submitted;
+
+    // Selections table
+    const dt = document.getElementById("dataTable");
+    if (sl.selections.length === 0) {
+        dt.innerHTML = `<tr><td colspan="5" class="empty-state">No selections yet</td></tr>`;
+    } else {
+        dt.innerHTML = sl.selections.map(s => `
+            <tr>
+                <td>${s.reg}</td>
+                <td><span class="tag">${s.nme}</span></td>
+                <td><span class="tag">${s.activity}</span></td>
+                <td style="color:var(--muted); font-size:12px;">${s.timestamp ? s.timestamp.slice(0,10) : "–"}</td>
+                <td><button class="btn btn-danger" onclick="deleteStudent('${s.reg}')">✕</button></td>
+            </tr>`).join("");
+    }
+
+    // Students table with submission status
+    const submittedRegs = new Set(sl.selections.map(s => s.reg));
+    const st = document.getElementById("studentTable");
+    if (sd.students.length === 0) {
+        st.innerHTML = `<tr><td colspan="4" class="empty-state">No students added yet</td></tr>`;
+    } else {
+        st.innerHTML = sd.students.map(s => `
+            <tr>
+                <td>${s.reg}</td>
+                <td>${s.dob}</td>
+                <td>${submittedRegs.has(s.reg)
+                    ? '<span style="color:var(--success);">✓ Submitted</span>'
+                    : '<span style="color:var(--muted);">Pending</span>'}</td>
+                <td><button class="btn btn-danger" onclick="deleteStudent('${s.reg}')">✕</button></td>
+            </tr>`).join("");
+    }
+}
+
+// Highlight selected radio options
+document.querySelectorAll('.radio-option input').forEach(radio => {
+    radio.addEventListener('change', () => {
+        document.querySelectorAll(`.radio-option input[name="${radio.name}"]`)
+            .forEach(r => r.closest('.radio-option').classList.toggle('selected', r.checked));
+    });
+});
+</script>
+
+</body>
+</html>
